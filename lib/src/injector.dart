@@ -119,7 +119,7 @@ class Injector {
     if (_factories.containsKey(objectKey) && !overriding) {
       throw InjectorException("Mapping already present for type '$objectKey'");
     }
-    _factories[objectKey] = TypeFactory<T>((i, p) => factoryFn(i), isSingleton);
+    _factories[objectKey] = TypeFactory<T>((i, p) => factoryFn(i), isSingleton: isSingleton);
     return this;
   }
 
@@ -133,6 +133,9 @@ class Injector {
   ///
   /// When [isSingleton] is true the first returned instances of the object is stored and
   /// subsequently return in future calls.
+  ///
+  /// When [isParametrizedSingleton] is true the first returned instances of object with
+  /// same additionalParameters the is stored and subsequently return in future calls.
   ///
   /// When [overriding] is true, if  already exist something present on mapping, no exception
   /// will be throw, and the old reference will be override by the new one.
@@ -151,12 +154,13 @@ class Injector {
   Injector mapWithParams<T extends Object>(
       ObjectFactoryWithParamsFn<T> factoryFn,
       {String? key,
-      bool overriding = false}) {
+      bool overriding = false,
+      bool isParametrizedSingleton = false}) {
     final objectKey = _makeKey(T, key);
     if (_factories.containsKey(objectKey) && !overriding) {
       throw InjectorException("Mapping already present for type '$objectKey'");
     }
-    _factories[objectKey] = TypeFactory<T>(factoryFn, false);
+    _factories[objectKey] = TypeFactory<T>(factoryFn, isSingleton: false, isParametrizedSingleton: isParametrizedSingleton);
     return this;
   }
 

@@ -4,6 +4,7 @@ version: 2.0.0
 homepage: https://github.com/jonsamwell/flutter_simple_dependency_injection
 
 dependencies:
+  collection: ^1.16.0
 
 dev_dependencies:
   test:

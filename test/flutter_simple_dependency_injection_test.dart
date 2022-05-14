@@ -186,6 +186,21 @@ void main() {
     injector.dispose();
   });
 
+  test('can map same object with different keys and get instances', () async {
+    final injector = Injector();
+    injector.map<ObjectWithNoDependencies>(
+        (injector) => ObjectWithNoDependencies());
+    injector.map<ObjectWithNoDependencies>(
+        (injector) => ObjectWithNoDependencies(),
+        key: 'One');
+    final instanceOne = injector.get<ObjectWithNoDependencies>();
+    final instanceTwo = injector.get<ObjectWithNoDependencies>(key: 'One');
+    expect(instanceOne is ObjectWithNoDependencies, true);
+    expect(instanceTwo is ObjectWithNoDependencies, true);
+    expect(instanceOne != instanceTwo, true);
+    injector.dispose();
+  });
+
   test('can map simple named string type', () async {
     final injector = Injector();
     injector.map<String>((injector) => 'Jon', key: 'MyName');
@@ -208,6 +223,20 @@ void main() {
     injector.dispose();
   });
 
+  test('can get same instance by same parameters', () async {
+    final injector = Injector();
+    injector.mapWithParams<ObjectWithSomeConstructorArgDependencies>(
+        (injector, p) => ObjectWithSomeConstructorArgDependencies(p['id']), isParametrizedSingleton: true);
+    final instanceOne = injector.get<ObjectWithSomeConstructorArgDependencies>(
+        additionalParameters: {'id': 'some-id'});
+    expect(instanceOne is ObjectWithSomeConstructorArgDependencies, true);
+    expect(instanceOne.id, 'some-id');
+    final instanceTwo = injector.get<ObjectWithSomeConstructorArgDependencies>(
+        additionalParameters: {'id': 'some-id'});
+    expect(identical(instanceTwo,instanceOne), true);
+    injector.dispose();
+  });
+  
   test('can get all instances of type', () async {
     final injector = Injector();
     injector.map<ObjectWithSomeConstructorArgDependencies>(
